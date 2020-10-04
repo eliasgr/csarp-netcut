@@ -11,7 +11,7 @@ namespace CSArp
     {
         ListView ListView1 { get; }
         ToolStripStatusLabel ToolStripStatus { get; }
-        ToolStripComboBox ToolStripComboBoxDeviceList { get; }
+        //ToolStripComboBox ToolStripComboBoxDeviceList { get; }
         Form MainForm { get; }
         NotifyIcon NotifyIcon1 { get; }
         ToolStripTextBox ToolStripTextBoxClientName { get; }
@@ -20,5 +20,7 @@ namespace CSArp
         ToolStripMenuItem ShowLogToolStripMenuItem { get; }
         RichTextBox LogRichTextBox { get; }
         SaveFileDialog SaveFileDialogLog { get; }
+        ComboBox NetworkCardList { get; }
+        Label MyIpAddresslbl {get;}
     }
 }

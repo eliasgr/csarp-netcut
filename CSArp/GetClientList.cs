@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.InteropServices;
-using System.ComponentModel;
 using System.Net;
 using System.Net.NetworkInformation;
 using SharpPcap;
@@ -12,7 +8,6 @@ using PacketDotNet;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using System.IO;
 
 /*
  Reference:
@@ -53,13 +48,14 @@ namespace CSArp
             clientlist = new Dictionary<IPAddress, PhysicalAddress>(); //this is preventing redundant entries into listview and for counting total clients
             view.ListView1.Items.Clear();
             #endregion
-
+            
+            
             CaptureDeviceList capturedevicelist = CaptureDeviceList.Instance;
             capturedevicelist.Refresh(); //crucial for reflection of any network changes
-            capturedevice = (from devicex in capturedevicelist where ((SharpPcap.WinPcap.WinPcapDevice)devicex).Interface.FriendlyName == interfacefriendlyname select devicex).ToList()[0];
+            capturedevice = (from devicex in capturedevicelist where ((SharpPcap.Npcap.NpcapDevice)devicex).Interface.FriendlyName == interfacefriendlyname select devicex).ToList()[0];
             capturedevice.Open(DeviceMode.Promiscuous, 1000); //open device with 1000ms timeout
-            IPAddress myipaddress = ((SharpPcap.WinPcap.WinPcapDevice)capturedevice).Addresses[1].Addr.ipAddress; //possible critical point : Addresses[1] in hardcoding the index for obtaining ipv4 address
-
+            IPAddress myipaddress = ((SharpPcap.Npcap.NpcapDevice)capturedevice).Addresses[1].Addr.ipAddress; //possible critical point : Addresses[1] in hardcoding the index for obtaining ipv4 address
+            //view.MainForm.Invoke(new Action(()=>view.))
             #region Sending ARP requests to probe for all possible IP addresses on LAN
             new Thread(() =>
              {
@@ -67,8 +63,8 @@ namespace CSArp
                  {
                      for (int ipindex = 1; ipindex <= 255; ipindex++)
                      {
-                         ARPPacket arprequestpacket = new ARPPacket(ARPOperation.Request, PhysicalAddress.Parse("00-00-00-00-00-00"), IPAddress.Parse(GetRootIp(myipaddress) + ipindex), capturedevice.MacAddress, myipaddress);
-                         EthernetPacket ethernetpacket = new EthernetPacket(capturedevice.MacAddress, PhysicalAddress.Parse("FF-FF-FF-FF-FF-FF"), EthernetPacketType.Arp);
+                         ArpPacket arprequestpacket = new ArpPacket(ArpOperation.Request, PhysicalAddress.Parse("00-00-00-00-00-00"), IPAddress.Parse(GetRootIp(myipaddress) + ipindex), capturedevice.MacAddress, myipaddress);
+                         EthernetPacket ethernetpacket = new EthernetPacket(capturedevice.MacAddress, PhysicalAddress.Parse("FF-FF-FF-FF-FF-FF"), EthernetType.Arp);
                          ethernetpacket.PayloadPacket = arprequestpacket;
                          capturedevice.SendPacket(ethernetpacket);
                      }
@@ -93,15 +89,19 @@ namespace CSArp
                     while ((rawcapture = capturedevice.GetNextPacket()) != null && stopwatch.ElapsedMilliseconds <= scanduration)
                     {
                         Packet packet = Packet.ParsePacket(rawcapture.LinkLayerType, rawcapture.Data);
-                        ARPPacket arppacket = (ARPPacket)packet.Extract(typeof(ARPPacket));
-                        if (!clientlist.ContainsKey(arppacket.SenderProtocolAddress) && arppacket.SenderProtocolAddress.ToString() != "0.0.0.0" && areCompatibleIPs(arppacket.SenderProtocolAddress, myipaddress))
+                        ArpPacket ArpPacket = packet.Extract<ArpPacket>();
+                        if (!clientlist.ContainsKey(ArpPacket.SenderProtocolAddress) && ArpPacket.SenderProtocolAddress.ToString() != "0.0.0.0" && areCompatibleIPs(ArpPacket.SenderProtocolAddress, myipaddress))
                         {
-                            clientlist.Add(arppacket.SenderProtocolAddress, arppacket.SenderHardwareAddress);
+                            if (ArpPacket.SenderProtocolAddress.Equals(myipaddress))
+                            {
+                                continue;
+                            }
+                            clientlist.Add(ArpPacket.SenderProtocolAddress, ArpPacket.SenderHardwareAddress);
                             view.ListView1.Invoke(new Action(() =>
                             {
-                                view.ListView1.Items.Add(new ListViewItem(new string[] { clientlist.Count.ToString(), arppacket.SenderProtocolAddress.ToString(), GetMACString(arppacket.SenderHardwareAddress), "On", ApplicationSettingsClass.GetSavedClientNameFromMAC(GetMACString(arppacket.SenderHardwareAddress)) }));
+                                view.ListView1.Items.Add(new ListViewItem(new string[] { clientlist.Count.ToString(), ArpPacket.SenderProtocolAddress.ToString(), GetMACString(ArpPacket.SenderHardwareAddress), "On", ApplicationSettingsClass.GetSavedClientNameFromMAC(GetMACString(ArpPacket.SenderHardwareAddress)) }));
                             }));
-                            //Debug.Print("{0} @ {1}", arppacket.SenderProtocolAddress, arppacket.SenderHardwareAddress);
+                            //Debug.Print("{0} @ {1}", ArpPacket.SenderProtocolAddress, ArpPacket.SenderHardwareAddress);
                         }
                         int percentageprogress = (int)((float)stopwatch.ElapsedMilliseconds / scanduration * 100);
                         view.MainForm.Invoke(new Action(() => view.ToolStripStatusScan.Text = "Scanning " + percentageprogress + "%"));
@@ -135,7 +135,7 @@ namespace CSArp
         {
             try
             {
-                IPAddress myipaddress = ((SharpPcap.WinPcap.WinPcapDevice)capturedevice).Addresses[1].Addr.ipAddress; //possible critical point : Addresses[1] in hardcoding the index for obtaining ipv4 address
+                IPAddress myipaddress = ((SharpPcap.Npcap.NpcapDevice)capturedevice).Addresses[1].Addr.ipAddress; //possible critical point : Addresses[1] in hardcoding the index for obtaining ipv4 address
                 #region Sending ARP requests to probe for all possible IP addresses on LAN
                 new Thread(() =>
                 {
@@ -145,8 +145,8 @@ namespace CSArp
                         {
                             for (int ipindex = 1; ipindex <= 255; ipindex++)
                             {
-                                ARPPacket arprequestpacket = new ARPPacket(ARPOperation.Request, PhysicalAddress.Parse("00-00-00-00-00-00"), IPAddress.Parse(GetRootIp(myipaddress) + ipindex), capturedevice.MacAddress, myipaddress);
-                                EthernetPacket ethernetpacket = new EthernetPacket(capturedevice.MacAddress, PhysicalAddress.Parse("FF-FF-FF-FF-FF-FF"), EthernetPacketType.Arp);
+                                ArpPacket arprequestpacket = new ArpPacket(ArpOperation.Request, PhysicalAddress.Parse("00-00-00-00-00-00"), IPAddress.Parse(GetRootIp(myipaddress) + ipindex), capturedevice.MacAddress, myipaddress);
+                                EthernetPacket ethernetpacket = new EthernetPacket(capturedevice.MacAddress, PhysicalAddress.Parse("FF-FF-FF-FF-FF-FF"), EthernetType.Arp);
                                 ethernetpacket.PayloadPacket = arprequestpacket;
                                 capturedevice.SendPacket(ethernetpacket);
                             }
@@ -167,12 +167,12 @@ namespace CSArp
                 capturedevice.OnPacketArrival += (object sender, CaptureEventArgs e) =>
                 {
                     Packet packet = Packet.ParsePacket(e.Packet.LinkLayerType, e.Packet.Data);
-                    ARPPacket arppacket = (ARPPacket)packet.Extract(typeof(ARPPacket));
-                    if (!clientlist.ContainsKey(arppacket.SenderProtocolAddress) && arppacket.SenderProtocolAddress.ToString() != "0.0.0.0" && areCompatibleIPs(arppacket.SenderProtocolAddress, myipaddress))
+                    ArpPacket ArpPacket = packet.Extract<ArpPacket>();//.Extract(typeof(ArpPacket));
+                    if (!clientlist.ContainsKey(ArpPacket.SenderProtocolAddress) && ArpPacket.SenderProtocolAddress.ToString() != "0.0.0.0" && areCompatibleIPs(ArpPacket.SenderProtocolAddress, myipaddress))
                     {
-                        DebugOutputClass.Print(view, "Added " + arppacket.SenderProtocolAddress.ToString() + " @ " + GetMACString(arppacket.SenderHardwareAddress) + " from background scan!");
-                        clientlist.Add(arppacket.SenderProtocolAddress, arppacket.SenderHardwareAddress);
-                        view.ListView1.Invoke(new Action(() => view.ListView1.Items.Add(new ListViewItem(new string[] { (clientlist.Count).ToString(), arppacket.SenderProtocolAddress.ToString(), GetMACString(arppacket.SenderHardwareAddress), "On", ApplicationSettingsClass.GetSavedClientNameFromMAC(GetMACString(arppacket.SenderHardwareAddress)) }))));
+                        DebugOutputClass.Print(view, "Added " + ArpPacket.SenderProtocolAddress.ToString() + " @ " + GetMACString(ArpPacket.SenderHardwareAddress) + " from background scan!");
+                        clientlist.Add(ArpPacket.SenderProtocolAddress, ArpPacket.SenderHardwareAddress);
+                        view.ListView1.Invoke(new Action(() => view.ListView1.Items.Add(new ListViewItem(new string[] { (clientlist.Count).ToString(), ArpPacket.SenderProtocolAddress.ToString(), GetMACString(ArpPacket.SenderHardwareAddress), "On", ApplicationSettingsClass.GetSavedClientNameFromMAC(GetMACString(ArpPacket.SenderHardwareAddress)) }))));
                         view.MainForm.Invoke(new Action(() => view.ToolStripStatusScan.Text = clientlist.Count + " device(s) found"));
                     }
                 };
@@ -199,7 +199,7 @@ namespace CSArp
             }
             catch { }
         }
-
+        #region private
         /// <summary>
         /// Converts a PhysicalAddress to colon delimited string like FF:FF:FF:FF:FF:FF
         /// </summary>
@@ -242,5 +242,6 @@ namespace CSArp
         {
             return (GetRootIp(ip1) == GetRootIp(ip2)) ? true : false;
         }
+        #endregion
     }
 }

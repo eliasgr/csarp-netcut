@@ -21,13 +21,13 @@ namespace CSArp
         public static void Disconnect(IView view, Dictionary<IPAddress, PhysicalAddress> targetlist, IPAddress gatewayipaddress, PhysicalAddress gatewaymacaddress, string interfacefriendlyname)
         {
             engagedclientlist = new Dictionary<IPAddress, PhysicalAddress>();
-            capturedevice = (from devicex in CaptureDeviceList.Instance where ((SharpPcap.WinPcap.WinPcapDevice)devicex).Interface.FriendlyName == interfacefriendlyname select devicex).ToList()[0];
+            capturedevice = (from devicex in CaptureDeviceList.Instance where ((SharpPcap.Npcap.NpcapDevice)devicex).Interface.FriendlyName == interfacefriendlyname select devicex).ToList()[0];
             capturedevice.Open();
             foreach (var target in targetlist)
             {
-                IPAddress myipaddress = ((SharpPcap.WinPcap.WinPcapDevice)capturedevice).Addresses[1].Addr.ipAddress; //possible critical point : Addresses[1] in hardcoding the index for obtaining ipv4 address
-                ARPPacket arppacketforgatewayrequest = new ARPPacket(ARPOperation.Request, PhysicalAddress.Parse("00-00-00-00-00-00"), gatewayipaddress, capturedevice.MacAddress, target.Key);
-                EthernetPacket ethernetpacketforgatewayrequest = new EthernetPacket(capturedevice.MacAddress, gatewaymacaddress, EthernetPacketType.Arp);
+                IPAddress myipaddress = ((SharpPcap.Npcap.NpcapDevice)capturedevice).Addresses[1].Addr.ipAddress; //possible critical point : Addresses[1] in hardcoding the index for obtaining ipv4 address
+                ArpPacket arppacketforgatewayrequest = new ArpPacket(ArpOperation.Request, PhysicalAddress.Parse("00-00-00-00-00-00"), gatewayipaddress, capturedevice.MacAddress, target.Key);
+                EthernetPacket ethernetpacketforgatewayrequest = new EthernetPacket(capturedevice.MacAddress, gatewaymacaddress, EthernetType.Arp);
                 ethernetpacketforgatewayrequest.PayloadPacket = arppacketforgatewayrequest;
                 new Thread(() =>
                 {

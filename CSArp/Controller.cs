@@ -10,19 +10,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SharpPcap;
 using SharpPcap.WinPcap;
-using SharpPcap.AirPcap;
-using SharpPcap.LibPcap;
-using System.Diagnostics;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Reflection;
 using System.IO;
+using SharpPcap.Npcap;
 
 namespace CSArp
 {
@@ -46,34 +41,61 @@ namespace CSArp
         {
             CaptureDeviceList capturedevicelist = CaptureDeviceList.Instance;
             List<string> capturedevicelistofstring = new List<string>();
-            capturedevicelist.ToList().ForEach((ICaptureDevice capturedevice) =>
+            foreach (ICaptureDevice capturedevice in capturedevicelist)
             {
-                if (capturedevice is WinPcapDevice)
-                {
-                    WinPcapDevice winpcapdevice = (WinPcapDevice)capturedevice;
-                    capturedevicelistofstring.Add(winpcapdevice.Interface.FriendlyName);
-                }
-                else if (capturedevice is AirPcapDevice)
-                {
-                    AirPcapDevice airpcapdevice = (AirPcapDevice)capturedevice;
-                    capturedevicelistofstring.Add(airpcapdevice.Interface.FriendlyName);
-                }
-            });
-            _view.ToolStripComboBoxDeviceList.Items.AddRange(capturedevicelistofstring.ToArray());
-        }
+                var isnpcap = (capturedevice is NpcapDevice);
+                //var isAirPcap = (capturedevice is AirPcapDevice);
 
+                if (isnpcap)
+                {
+                    NpcapDevice npcapDevice = (NpcapDevice)capturedevice;
+                    if (npcapDevice.Interface.FriendlyName!=null)
+                    {
+                        capturedevicelistofstring.Add(npcapDevice.Interface.FriendlyName);
+                    }
+                    
+                }
+                //if (isAirPcap)
+                //{
+                //    AirPcapDevice airpcapdevice = (AirPcapDevice)capturedevice;
+                //    capturedevicelistofstring.Add(airpcapdevice.Interface.FriendlyName);
+                //}
+            }
+            //capturedevicelist.ToList().ForEach((ICaptureDevice capturedevice) =>
+            //{
+            //    if (capturedevice is null)
+            //    {
+            //        throw new ArgumentNullException(nameof(capturedevice));
+            //    }
+
+            //    if (capturedevice is WinPcapDevice)
+            //    {
+            //        WinPcapDevice winpcapdevice = (WinPcapDevice)capturedevice;
+            //        capturedevicelistofstring.Add(winpcapdevice.Interface.FriendlyName);
+            //    }
+            //    else if (capturedevice is AirPcapDevice)
+            //    {
+            //        AirPcapDevice airpcapdevice = (AirPcapDevice)capturedevice;
+            //        capturedevicelistofstring.Add(airpcapdevice.Interface.FriendlyName);
+            //    }
+            //});
+            //_view.ToolStripComboBoxDeviceList.Items.AddRange(capturedevicelistofstring.ToArray());
+            _view.NetworkCardList.Items.AddRange(capturedevicelistofstring.ToArray());
+        }            
+        
         /// <summary>
         /// Populate the LAN clients
         /// </summary>
         public void RefreshClients()
         {
-            if (_view.ToolStripComboBoxDeviceList.Text != "") //if a network interface has been selected
+            if (_view.NetworkCardList.Text != "") //if a network interface has been selected
             {
                 if (_view.ToolStripStatusScan.Text.IndexOf("Scanning") == -1) //if a scan isn't active already
                 {
                     DisconnectReconnect.Reconnect(); //first disengage spoofing threads
                     _view.ToolStripStatus.Text = "Ready";
-                    GetClientList.GetAllClients(_view, _view.ToolStripComboBoxDeviceList.Text);
+                    
+                    GetClientList.GetAllClients(_view, _view.NetworkCardList.Text);
                 }
 
             }
@@ -101,7 +123,7 @@ namespace CSArp
                         _view.ToolStripStatus.Text = "Arpspoofing active...";
                     }));
                 }
-                DisconnectReconnect.Disconnect(_view, targetlist, GetGatewayIP(_view.ToolStripComboBoxDeviceList.Text), GetGatewayMAC(_view.ToolStripComboBoxDeviceList.Text), _view.ToolStripComboBoxDeviceList.Text);
+                DisconnectReconnect.Disconnect(_view, targetlist, GetGatewayIP(_view.NetworkCardList.Text), GetGatewayMAC(_view.NetworkCardList.Text), _view.NetworkCardList.Text);
 
             }
         }
@@ -124,7 +146,7 @@ namespace CSArp
         /// </summary>
         public void SetSavedInterface()
         {
-            _view.ToolStripComboBoxDeviceList.Text = ApplicationSettingsClass.GetSavedPreferredInterfaceFriendlyName();
+            _view.NetworkCardList.Text = ApplicationSettingsClass.GetSavedPreferredInterfaceFriendlyName();
         }
 
 
@@ -173,7 +195,7 @@ namespace CSArp
         }
         public void ToolStripSaveClicked()
         {
-            if (ApplicationSettingsClass.SaveSettings(_view.ListView1, _view.ToolStripComboBoxDeviceList.Text))
+            if (ApplicationSettingsClass.SaveSettings(_view.ListView1, _view.NetworkCardList.Text))
                 _view.ToolStripStatus.Text = "Settings saved!";
         }
         public void AttachOnExitEventHandler()
@@ -235,27 +257,28 @@ namespace CSArp
             string interfacename = "";
             foreach (ICaptureDevice capturedevice in CaptureDeviceList.Instance)
             {
-                if (capturedevice is WinPcapDevice)
+                if (capturedevice is NpcapDevice)
                 {
-                    WinPcapDevice winpcapdevice = (WinPcapDevice)capturedevice;
-                    if (winpcapdevice.Interface.FriendlyName == friendlyname)
+                    NpcapDevice npcapDevice = (NpcapDevice)capturedevice;
+                    if (npcapDevice.Interface.FriendlyName == friendlyname)
                     {
-                        interfacename = winpcapdevice.Interface.Name;
+                        interfacename = npcapDevice.Interface.Name;
                     }
                 }
-                else if (capturedevice is AirPcapDevice)
-                {
-                    AirPcapDevice airpcapdevice = (AirPcapDevice)capturedevice;
-                    if (airpcapdevice.Interface.FriendlyName == friendlyname)
-                    {
-                        interfacename = airpcapdevice.Interface.Name;
-                    }
-                }
+                //else if (capturedevice is AirPcapDevice)
+                //{
+                //    AirPcapDevice airpcapdevice = (AirPcapDevice)capturedevice;
+                //    if (airpcapdevice.Interface.FriendlyName == friendlyname)
+                //    {
+                //        interfacename = airpcapdevice.Interface.Name;
+                //    }
+                //}
             }
             if (interfacename != "")
             {
                 foreach (var networkinterface in NetworkInterface.GetAllNetworkInterfaces())
                 {
+                    
                     if (networkinterface.Name == friendlyname)
                     {
                         foreach (var gateway in networkinterface.GetIPProperties().GatewayAddresses)

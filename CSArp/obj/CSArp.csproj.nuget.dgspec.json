@@ -1,0 +1,77 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\projects\\csarp-netcut\\CSArp\\CSArp.csproj": {}
+  },
+  "projects": {
+    "D:\\projects\\csarp-netcut\\CSArp\\CSArp.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\projects\\csarp-netcut\\CSArp\\CSArp.csproj",
+        "projectName": "CSArp",
+        "projectPath": "D:\\projects\\csarp-netcut\\CSArp\\CSArp.csproj",
+        "packagesPath": "C:\\Users\\elias\\.nuget\\packages\\",
+        "outputPath": "D:\\projects\\csarp-netcut\\CSArp\\obj\\",
+        "projectStyle": "PackageReference",
+        "skipContentFileWrite": true,
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\elias\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net48"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net48": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {
+          "dependencies": {
+            "Costura.Fody": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[5.0.0-alpha0281, )"
+            },
+            "Fody": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.2.6, )"
+            },
+            "PacketDotNet": {
+              "target": "Package",
+              "version": "[1.1.1, )"
+            },
+            "SharpPcap": {
+              "target": "Package",
+              "version": "[5.3.0, )"
+            }
+          }
+        }
+      },
+      "runtimes": {
+        "win": {
+          "#import": []
+        },
+        "win-x64": {
+          "#import": []
+        },
+        "win-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

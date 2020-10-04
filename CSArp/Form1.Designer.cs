@@ -55,6 +55,8 @@
             this.toolStripStatusScan = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBarScan = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
+            this.clearStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeaderSN = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -64,9 +66,12 @@
             this.columnHeaderClientname = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.richTextBoxLog = new System.Windows.Forms.RichTextBox();
-            this.saveStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.clearStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.networkCardList = new System.Windows.Forms.ComboBox();
+            this.NetworkCardLabel = new System.Windows.Forms.Label();
+            this.refreshButton = new System.Windows.Forms.Button();
+            this.disconnectButton = new System.Windows.Forms.Button();
+            this.myIpAddresslbl = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -98,7 +103,7 @@
             // 
             this.toolStripMenuItemSaveSettings.Name = "toolStripMenuItemSaveSettings";
             this.toolStripMenuItemSaveSettings.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.toolStripMenuItemSaveSettings.Size = new System.Drawing.Size(164, 22);
+            this.toolStripMenuItemSaveSettings.Size = new System.Drawing.Size(163, 22);
             this.toolStripMenuItemSaveSettings.Text = "Save";
             this.toolStripMenuItemSaveSettings.ToolTipText = "Save current settings";
             this.toolStripMenuItemSaveSettings.Click += new System.EventHandler(this.toolStripMenuItemSaveSettings_Click);
@@ -106,13 +111,13 @@
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(161, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(160, 6);
             // 
             // toolStripMenuItemMinimize
             // 
             this.toolStripMenuItemMinimize.Name = "toolStripMenuItemMinimize";
             this.toolStripMenuItemMinimize.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
-            this.toolStripMenuItemMinimize.Size = new System.Drawing.Size(164, 22);
+            this.toolStripMenuItemMinimize.Size = new System.Drawing.Size(163, 22);
             this.toolStripMenuItemMinimize.Text = "Minimize";
             this.toolStripMenuItemMinimize.ToolTipText = "Minimize to tray";
             this.toolStripMenuItemMinimize.Click += new System.EventHandler(this.toolStripMenuItemMinimize_Click);
@@ -121,7 +126,7 @@
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -170,6 +175,7 @@
             // 
             // toolStripTextBoxClientName
             // 
+            this.toolStripTextBoxClientName.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.toolStripTextBoxClientName.Name = "toolStripTextBoxClientName";
             this.toolStripTextBoxClientName.Size = new System.Drawing.Size(100, 23);
             this.toolStripTextBoxClientName.KeyUp += new System.Windows.Forms.KeyEventHandler(this.toolStripTextBoxClientName_KeyUp);
@@ -251,7 +257,7 @@
             // toolStripStatusLabelSpringer
             // 
             this.toolStripStatusLabelSpringer.Name = "toolStripStatusLabelSpringer";
-            this.toolStripStatusLabelSpringer.Size = new System.Drawing.Size(230, 19);
+            this.toolStripStatusLabelSpringer.Size = new System.Drawing.Size(261, 19);
             this.toolStripStatusLabelSpringer.Spring = true;
             // 
             // toolStripStatusScan
@@ -278,11 +284,25 @@
             this.toolStripSplitButton1.Size = new System.Drawing.Size(43, 22);
             this.toolStripSplitButton1.Text = "Log";
             // 
+            // clearStripMenuItem
+            // 
+            this.clearStripMenuItem.Name = "clearStripMenuItem";
+            this.clearStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.clearStripMenuItem.Text = "Clear";
+            this.clearStripMenuItem.Click += new System.EventHandler(this.clearStripMenuItem_Click);
+            // 
+            // saveStripMenuItem
+            // 
+            this.saveStripMenuItem.Name = "saveStripMenuItem";
+            this.saveStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.saveStripMenuItem.Text = "Save";
+            this.saveStripMenuItem.Click += new System.EventHandler(this.saveStripMenuItem_Click);
+            // 
             // showLogToolStripMenuItem
             // 
             this.showLogToolStripMenuItem.CheckOnClick = true;
             this.showLogToolStripMenuItem.Name = "showLogToolStripMenuItem";
-            this.showLogToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.showLogToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.showLogToolStripMenuItem.Text = "Show log";
             this.showLogToolStripMenuItem.CheckStateChanged += new System.EventHandler(this.showLogToolStripMenuItem_CheckStateChanged);
             // 
@@ -291,6 +311,7 @@
             this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.listView1.CheckBoxes = true;
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderSN,
             this.columnHeaderIP,
@@ -299,10 +320,12 @@
             this.columnHeaderClientname});
             this.listView1.FullRowSelect = true;
             this.listView1.GridLines = true;
-            this.listView1.Location = new System.Drawing.Point(12, 27);
+            this.listView1.HideSelection = false;
+            this.listView1.Location = new System.Drawing.Point(12, 62);
             this.listView1.Name = "listView1";
             this.listView1.ShowItemToolTips = true;
-            this.listView1.Size = new System.Drawing.Size(546, 285);
+            this.listView1.Size = new System.Drawing.Size(546, 250);
+            this.listView1.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listView1.TabIndex = 2;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -349,25 +372,64 @@
             this.richTextBoxLog.Text = "";
             this.richTextBoxLog.Visible = false;
             // 
-            // saveStripMenuItem
+            // networkCardList
             // 
-            this.saveStripMenuItem.Name = "saveStripMenuItem";
-            this.saveStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.saveStripMenuItem.Text = "Save";
-            this.saveStripMenuItem.Click += new System.EventHandler(this.saveStripMenuItem_Click);
+            this.networkCardList.FormattingEnabled = true;
+            this.networkCardList.Location = new System.Drawing.Point(138, 35);
+            this.networkCardList.Name = "networkCardList";
+            this.networkCardList.Size = new System.Drawing.Size(155, 21);
+            this.networkCardList.TabIndex = 4;
+            this.networkCardList.Text = "-- Select --";
+            this.networkCardList.SelectedIndexChanged += new System.EventHandler(this.networkCardList_SelectedIndexChanged);
             // 
-            // clearStripMenuItem
+            // NetworkCardLabel
             // 
-            this.clearStripMenuItem.Name = "clearStripMenuItem";
-            this.clearStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.clearStripMenuItem.Text = "Clear";
-            this.clearStripMenuItem.Click += new System.EventHandler(this.clearStripMenuItem_Click);
+            this.NetworkCardLabel.AutoSize = true;
+            this.NetworkCardLabel.Location = new System.Drawing.Point(21, 38);
+            this.NetworkCardLabel.Name = "NetworkCardLabel";
+            this.NetworkCardLabel.Size = new System.Drawing.Size(111, 13);
+            this.NetworkCardLabel.TabIndex = 5;
+            this.NetworkCardLabel.Text = "Choose Network Card";
+            // 
+            // refreshButton
+            // 
+            this.refreshButton.Location = new System.Drawing.Point(322, 35);
+            this.refreshButton.Name = "refreshButton";
+            this.refreshButton.Size = new System.Drawing.Size(75, 23);
+            this.refreshButton.TabIndex = 6;
+            this.refreshButton.Text = "Refresh";
+            this.refreshButton.UseVisualStyleBackColor = true;
+            this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
+            // 
+            // disconnectButton
+            // 
+            this.disconnectButton.Location = new System.Drawing.Point(418, 35);
+            this.disconnectButton.Name = "disconnectButton";
+            this.disconnectButton.Size = new System.Drawing.Size(75, 23);
+            this.disconnectButton.TabIndex = 7;
+            this.disconnectButton.Text = "Disconnect";
+            this.disconnectButton.UseVisualStyleBackColor = true;
+            this.disconnectButton.Click += new System.EventHandler(this.disconnectButton_Click);
+            // 
+            // myIpAddresslbl
+            // 
+            this.myIpAddresslbl.AutoSize = true;
+            this.myIpAddresslbl.Location = new System.Drawing.Point(154, 10);
+            this.myIpAddresslbl.Name = "myIpAddresslbl";
+            this.myIpAddresslbl.Size = new System.Drawing.Size(0, 13);
+            this.myIpAddresslbl.TabIndex = 8;
+            this.myIpAddresslbl.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(570, 339);
+            this.Controls.Add(this.myIpAddresslbl);
+            this.Controls.Add(this.disconnectButton);
+            this.Controls.Add(this.refreshButton);
+            this.Controls.Add(this.NetworkCardLabel);
+            this.Controls.Add(this.networkCardList);
             this.Controls.Add(this.richTextBoxLog);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.statusStrip1);
@@ -427,6 +489,11 @@
         private System.Windows.Forms.ToolStripMenuItem saveStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.ComboBox networkCardList;
+        private System.Windows.Forms.Label NetworkCardLabel;
+        private System.Windows.Forms.Button refreshButton;
+        private System.Windows.Forms.Button disconnectButton;
+        private System.Windows.Forms.Label myIpAddresslbl;
     }
 }
 

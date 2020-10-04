@@ -1,9 +1,11 @@
-﻿using System;
+﻿using SharpPcap;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,6 +15,7 @@ namespace CSArp
     public partial class Form1 : Form, IView
     {
         private Controller _controller;
+        //private static ICaptureDevice capturedevice;
         public Form1()
         {
             InitializeComponent();
@@ -43,6 +46,8 @@ namespace CSArp
                 return toolStripComboBoxDevicelist;
             }
         }
+
+        public ComboBox NetworkCardList => networkCardList;
         public Form MainForm
         {
             get
@@ -99,6 +104,18 @@ namespace CSArp
                 return saveFileDialog1;
             }
         }
+
+        public Label MyIpAddresslbl
+        { 
+            get 
+            {
+                return myIpAddresslbl;
+            }
+        }
+
+
+
+
         #endregion
 
         private void toolStripMenuItemRefreshClients_Click(object sender, EventArgs e)
@@ -118,6 +135,7 @@ namespace CSArp
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            
             _controller.AttachOnExitEventHandler();
             _controller.PopulateInterfaces();
             _controller.SetSavedInterface();
@@ -167,6 +185,22 @@ namespace CSArp
         private void clearStripMenuItem_Click(object sender, EventArgs e)
         {
             _controller.ClearLog();
+        }
+
+        private void networkCardList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _controller.RefreshClients();
+            //label1.Text = myipaddress.ToString();
+        }
+
+        private void refreshButton_Click(object sender, EventArgs e)
+        {
+            _controller.RefreshClients();
+        }
+
+        private void disconnectButton_Click(object sender, EventArgs e)
+        {
+            _controller.DisconnectSelectedClients();
         }
     }
 }
