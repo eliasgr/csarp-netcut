@@ -59,7 +59,7 @@ namespace CSArp
                     {
                         Packet packet = Packet.ParsePacket(rawcapture.LinkLayerType, rawcapture.Data);
                         ArpPacket ArpPacket = packet.Extract<ArpPacket>();
-                        if (!clientlist.ContainsKey(ArpPacket.SenderProtocolAddress) && ArpPacket.SenderProtocolAddress.ToString() != "0.0.0.0" && areCompatibleIPs(ArpPacket.SenderProtocolAddress, myipaddress))
+                        if (!clientlist.ContainsKey(ArpPacket.SenderProtocolAddress) && ArpPacket.SenderProtocolAddress.ToString() != "0.0.0.0" && AreCompatibleIPs(ArpPacket.SenderProtocolAddress, myipaddress))
                         {
                             if (ArpPacket.SenderProtocolAddress.Equals(myipaddress))
                             {
@@ -80,7 +80,7 @@ namespace CSArp
                     stopwatch.Stop();
                     view.MainForm.Invoke(new Action(() => view.ToolStripStatusScan.Text = clientlist.Count.ToString() + " device(s) found"));
                     view.MainForm.Invoke(new Action(() => view.ToolStripProgressBarScan.Value = 100));
-                    BackgroundScanStart(view, interfacefriendlyname); //start passive monitoring
+                    BackgroundScanStart(view); //start passive monitoring
                 }
                 catch (PcapException ex)
                 {
@@ -160,7 +160,7 @@ namespace CSArp
         /// <summary>
         /// Actively monitor ARP packets for signs of new clients after GetAllClients active scan is done
         /// </summary>
-        public static void BackgroundScanStart(IView view, string interfacefriendlyname)
+        public static void BackgroundScanStart(IView view)
         {
             try
             {
@@ -199,7 +199,7 @@ namespace CSArp
                 {
                     Packet packet = Packet.ParsePacket(e.Packet.LinkLayerType, e.Packet.Data);
                     ArpPacket ArpPacket = packet.Extract<ArpPacket>();//.Extract(typeof(ArpPacket));
-                    if (!clientlist.ContainsKey(ArpPacket.SenderProtocolAddress) && ArpPacket.SenderProtocolAddress.ToString() != "0.0.0.0" && areCompatibleIPs(ArpPacket.SenderProtocolAddress, myipaddress))
+                    if (!clientlist.ContainsKey(ArpPacket.SenderProtocolAddress) && ArpPacket.SenderProtocolAddress.ToString() != "0.0.0.0" && AreCompatibleIPs(ArpPacket.SenderProtocolAddress, myipaddress))
                     {
                         DebugOutputClass.Print(view, "Added " + ArpPacket.SenderProtocolAddress.ToString() + " @ " + GetMACString(ArpPacket.SenderHardwareAddress) + " from background scan!");
                         clientlist.Add(ArpPacket.SenderProtocolAddress, ArpPacket.SenderHardwareAddress);
@@ -269,9 +269,9 @@ namespace CSArp
         /// <param name="ip1"></param>
         /// <param name="ip2"></param>
         /// <returns></returns>
-        private static bool areCompatibleIPs(IPAddress ip1, IPAddress ip2)
+        private static bool AreCompatibleIPs(IPAddress ip1, IPAddress ip2)
         {
-            return (GetRootIp(ip1) == GetRootIp(ip2)) ? true : false;
+            return (GetRootIp(ip1) == GetRootIp(ip2));
         }
         #endregion
     }
