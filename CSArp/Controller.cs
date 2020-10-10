@@ -41,45 +41,20 @@ namespace CSArp
         {
             CaptureDeviceList capturedevicelist = CaptureDeviceList.Instance;
             List<string> capturedevicelistofstring = new List<string>();
+            
             foreach (ICaptureDevice capturedevice in capturedevicelist)
             {
-                var isnpcap = (capturedevice is NpcapDevice);
-                //var isAirPcap = (capturedevice is AirPcapDevice);
 
-                if (isnpcap)
+                if (capturedevice is NpcapDevice npcapDevice)
                 {
-                    NpcapDevice npcapDevice = (NpcapDevice)capturedevice;
-                    if (npcapDevice.Interface.FriendlyName!=null)
+                    if (npcapDevice.Interface.FriendlyName != null)
                     {
                         capturedevicelistofstring.Add(npcapDevice.Interface.FriendlyName);
                     }
-                    
-                }
-                //if (isAirPcap)
-                //{
-                //    AirPcapDevice airpcapdevice = (AirPcapDevice)capturedevice;
-                //    capturedevicelistofstring.Add(airpcapdevice.Interface.FriendlyName);
-                //}
-            }
-            //capturedevicelist.ToList().ForEach((ICaptureDevice capturedevice) =>
-            //{
-            //    if (capturedevice is null)
-            //    {
-            //        throw new ArgumentNullException(nameof(capturedevice));
-            //    }
 
-            //    if (capturedevice is WinPcapDevice)
-            //    {
-            //        WinPcapDevice winpcapdevice = (WinPcapDevice)capturedevice;
-            //        capturedevicelistofstring.Add(winpcapdevice.Interface.FriendlyName);
-            //    }
-            //    else if (capturedevice is AirPcapDevice)
-            //    {
-            //        AirPcapDevice airpcapdevice = (AirPcapDevice)capturedevice;
-            //        capturedevicelistofstring.Add(airpcapdevice.Interface.FriendlyName);
-            //    }
-            //});
-            //_view.ToolStripComboBoxDeviceList.Items.AddRange(capturedevicelistofstring.ToArray());
+                }
+
+            }
             _view.NetworkCardList.Items.AddRange(capturedevicelistofstring.ToArray());
         }            
         
@@ -257,9 +232,8 @@ namespace CSArp
             string interfacename = "";
             foreach (ICaptureDevice capturedevice in CaptureDeviceList.Instance)
             {
-                if (capturedevice is NpcapDevice)
+                if (capturedevice is NpcapDevice npcapDevice)
                 {
-                    NpcapDevice npcapDevice = (NpcapDevice)capturedevice;
                     if (npcapDevice.Interface.FriendlyName == friendlyname)
                     {
                         interfacename = npcapDevice.Interface.Name;

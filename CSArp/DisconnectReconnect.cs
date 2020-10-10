@@ -27,8 +27,10 @@ namespace CSArp
             {
                 IPAddress myipaddress = ((SharpPcap.Npcap.NpcapDevice)capturedevice).Addresses[1].Addr.ipAddress; //possible critical point : Addresses[1] in hardcoding the index for obtaining ipv4 address
                 ArpPacket arppacketforgatewayrequest = new ArpPacket(ArpOperation.Request, PhysicalAddress.Parse("00-00-00-00-00-00"), gatewayipaddress, capturedevice.MacAddress, target.Key);
-                EthernetPacket ethernetpacketforgatewayrequest = new EthernetPacket(capturedevice.MacAddress, gatewaymacaddress, EthernetType.Arp);
-                ethernetpacketforgatewayrequest.PayloadPacket = arppacketforgatewayrequest;
+                var ethernetpacketforgatewayrequest = new EthernetPacket(capturedevice.MacAddress, gatewaymacaddress, EthernetType.Arp)
+                {
+                    PayloadPacket = arppacketforgatewayrequest
+                };
                 new Thread(() =>
                 {
                     disengageflag = false;
