@@ -19,9 +19,9 @@ namespace CSArp
 {
     public static class GetClientList
     {
-        private static ICaptureDevice capturedevice;
+        private static NpcapDevice capturedevice;
         private static Dictionary<IPAddress, PhysicalAddress> clientlist;
-
+        private static readonly NpcapDeviceList capturedevicelist = NpcapDeviceList.Instance;
         /// <summary>
         /// Populates listview with machines connected to the LAN
         /// </summary>
@@ -33,12 +33,12 @@ namespace CSArp
 
             Initialize(view);
 
-            CaptureDeviceList capturedevicelist = CaptureDeviceList.Instance;
+            
             capturedevicelist.Refresh(); //crucial for reflection of any network changes
             GetSelectedDevice(interfacefriendlyname, capturedevicelist);
 
             capturedevice.Open(DeviceMode.Promiscuous, 1000); //open device with 1000ms timeout
-            IPAddress myipaddress = ((NpcapDevice)capturedevice).Addresses[1].Addr.ipAddress; //possible critical point : Addresses[1] in hardcoding the index for obtaining ipv4 address
+            IPAddress myipaddress = capturedevice.Addresses[1].Addr.ipAddress; //possible critical point : Addresses[1] in hardcoding the index for obtaining ipv4 address
 
             #region Sending ARP requests to probe for all possible IP addresses on LAN
             SendArpRequest(view, myipaddress);
@@ -51,6 +51,8 @@ namespace CSArp
             long scanduration = 5000;
             new Thread(() =>
             {
+
+
                 try
                 {
                     Stopwatch stopwatch = new Stopwatch();
@@ -120,7 +122,7 @@ namespace CSArp
             }).Start();
         }
 
-        private static void GetSelectedDevice(string interfacefriendlyname, CaptureDeviceList capturedevicelist)
+        public static NpcapDevice GetSelectedDevice(string interfacefriendlyname, NpcapDeviceList capturedevicelist)
         {
             foreach (NpcapDevice item in capturedevicelist)
             {
@@ -135,6 +137,7 @@ namespace CSArp
                     break;
                 }
             }
+            return capturedevice;
         }
 
         private static void Initialize(IView view)
@@ -155,6 +158,7 @@ namespace CSArp
             }
             clientlist = new Dictionary<IPAddress, PhysicalAddress>(); //this is preventing redundant entries into listview and for counting total clients
             view.ListView1.Items.Clear();
+            capturedevice = GetSelectedDevice(view.NetworkCardList.SelectedText, capturedevicelist);
         }
 
         /// <summary>
@@ -164,7 +168,7 @@ namespace CSArp
         {
             try
             {
-                IPAddress myipaddress = ((SharpPcap.Npcap.NpcapDevice)capturedevice).Addresses[1].Addr.ipAddress; //possible critical point : Addresses[1] in hardcoding the index for obtaining ipv4 address
+                IPAddress myipaddress = capturedevice.Addresses[1].Addr.ipAddress; //possible critical point : Addresses[1] in hardcoding the index for obtaining ipv4 address
                 #region Sending ARP requests to probe for all possible IP addresses on LAN
                 new Thread(() =>
                 {
@@ -199,7 +203,7 @@ namespace CSArp
                 {
                     Packet packet = Packet.ParsePacket(e.Packet.LinkLayerType, e.Packet.Data);
                     ArpPacket ArpPacket = packet.Extract<ArpPacket>();//.Extract(typeof(ArpPacket));
-                    if (!clientlist.ContainsKey(ArpPacket.SenderProtocolAddress) && ArpPacket.SenderProtocolAddress.ToString() != "0.0.0.0" && AreCompatibleIPs(ArpPacket.SenderProtocolAddress, myipaddress))
+                    if (!clientlist.ContainsKey(ArpPacket.SenderProtocolAddress) && ArpPacket.SenderProtocolAddress.ToString() != myipaddress.ToString() && ArpPacket.SenderProtocolAddress.ToString() != "0.0.0.0" && AreCompatibleIPs(ArpPacket.SenderProtocolAddress, myipaddress))
                     {
                         DebugOutputClass.Print(view, "Added " + ArpPacket.SenderProtocolAddress.ToString() + " @ " + GetMACString(ArpPacket.SenderHardwareAddress) + " from background scan!");
                         clientlist.Add(ArpPacket.SenderProtocolAddress, ArpPacket.SenderHardwareAddress);
@@ -223,12 +227,13 @@ namespace CSArp
         /// </summary>
         public static void CloseAllCaptures()
         {
-            try
+            if (capturedevice!=null)
             {
                 capturedevice.StopCapture();
                 capturedevice.Close();
             }
-            catch { }
+               
+            
         }
         #region private
         /// <summary>

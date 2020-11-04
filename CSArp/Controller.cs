@@ -18,13 +18,14 @@ using System.Net.NetworkInformation;
 using System.Reflection;
 using System.IO;
 using SharpPcap.Npcap;
+using System.Linq;
 
 namespace CSArp
 {
     public class Controller
     {
         #region fields
-        private IView _view;
+        private readonly IView _view;
         #endregion
 
         #region constructor
@@ -39,25 +40,15 @@ namespace CSArp
         /// </summary>
         public void PopulateInterfaces()
         {
-            CaptureDeviceList capturedevicelist = CaptureDeviceList.Instance;
-            List<string> capturedevicelistofstring = new List<string>();
-            
-            foreach (ICaptureDevice capturedevice in capturedevicelist)
-            {
+            //var capturedevicelist = NpcapDeviceList.Instance;
 
-                if (capturedevice is NpcapDevice npcapDevice)
-                {
-                    if (npcapDevice.Interface.FriendlyName != null)
-                    {
-                        capturedevicelistofstring.Add(npcapDevice.Interface.FriendlyName);
-                    }
-
-                }
-
-            }
+            List<string> capturedevicelistofstring = (from capturedevice in NpcapDeviceList.Instance
+                                                      where capturedevice.Interface.FriendlyName != null
+                                                      select capturedevice.Interface.FriendlyName).ToList();
+            _view.NetworkCardList.Items.Add("--Select Device --");
             _view.NetworkCardList.Items.AddRange(capturedevicelistofstring.ToArray());
-        }            
-        
+        }
+
         /// <summary>
         /// Populate the LAN clients
         /// </summary>
@@ -69,7 +60,7 @@ namespace CSArp
                 {
                     DisconnectReconnect.Reconnect(); //first disengage spoofing threads
                     _view.ToolStripStatus.Text = "Ready";
-                    
+
                     GetClientList.GetAllClients(_view, _view.NetworkCardList.Text);
                 }
 
@@ -121,7 +112,9 @@ namespace CSArp
         /// </summary>
         public void SetSavedInterface()
         {
-            _view.NetworkCardList.Text = ApplicationSettingsClass.GetSavedPreferredInterfaceFriendlyName();
+            var defaultDevice = ApplicationSettingsClass.GetSavedPreferredInterfaceFriendlyName();
+            _view.NetworkCardList.SelectedText = defaultDevice;
+           // _view.NetworkCardList.Text = ApplicationSettingsClass.GetSavedPreferredInterfaceFriendlyName();
         }
 
 
@@ -175,7 +168,7 @@ namespace CSArp
         }
         public void AttachOnExitEventHandler()
         {
-            Application.ApplicationExit += (object sender, EventArgs e)=> GetClientList.CloseAllCaptures();
+            Application.ApplicationExit += (object sender, EventArgs e) => GetClientList.CloseAllCaptures();
         }
         public void ShowLogToolStripMenuItemChecked()
         {
@@ -197,14 +190,14 @@ namespace CSArp
             _view.SaveFileDialogLog.FileName = "CSArp-log";
             _view.SaveFileDialogLog.FileOk += (object sender, System.ComponentModel.CancelEventArgs e) =>
             {
-                if(_view.SaveFileDialogLog.FileName!="" && !File.Exists(_view.SaveFileDialogLog.FileName))
+                if (_view.SaveFileDialogLog.FileName != "" && !File.Exists(_view.SaveFileDialogLog.FileName))
                 {
                     try
                     {
                         File.WriteAllText(_view.SaveFileDialogLog.FileName, _view.LogRichTextBox.Text);
                         DebugOutputClass.Print(_view, "Log saved to " + _view.SaveFileDialogLog.FileName);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
@@ -229,30 +222,25 @@ namespace CSArp
         private IPAddress GetGatewayIP(string friendlyname)
         {
             IPAddress retval = null;
-            string interfacename = "";
-            foreach (ICaptureDevice capturedevice in CaptureDeviceList.Instance)
-            {
-                if (capturedevice is NpcapDevice npcapDevice)
-                {
-                    if (npcapDevice.Interface.FriendlyName == friendlyname)
-                    {
-                        interfacename = npcapDevice.Interface.Name;
-                    }
-                }
-                //else if (capturedevice is AirPcapDevice)
-                //{
-                //    AirPcapDevice airpcapdevice = (AirPcapDevice)capturedevice;
-                //    if (airpcapdevice.Interface.FriendlyName == friendlyname)
-                //    {
-                //        interfacename = airpcapdevice.Interface.Name;
-                //    }
-                //}
-            }
+            var devicelist = NpcapDeviceList.Instance;
+            var interfacename = GetClientList.GetSelectedDevice(friendlyname, devicelist).Name;
+
+            //foreach (ICaptureDevice capturedevice in CaptureDeviceList.Instance)
+            //{
+            //    if (capturedevice is NpcapDevice npcapDevice)
+            //    {
+            //        if (npcapDevice.Interface.FriendlyName == friendlyname)
+            //        {
+            //            interfacename = npcapDevice.Interface.Name;
+            //        }
+            //    }
+
+            //}
             if (interfacename != "")
             {
                 foreach (var networkinterface in NetworkInterface.GetAllNetworkInterfaces())
                 {
-                    
+
                     if (networkinterface.Name == friendlyname)
                     {
                         foreach (var gateway in networkinterface.GetIPProperties().GatewayAddresses)
@@ -278,6 +266,7 @@ namespace CSArp
             }
             return retval;
         }
+     
         #endregion
     }
 }

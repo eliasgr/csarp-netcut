@@ -106,7 +106,7 @@
             this.toolStripMenuItemSaveSettings.Size = new System.Drawing.Size(163, 22);
             this.toolStripMenuItemSaveSettings.Text = "Save";
             this.toolStripMenuItemSaveSettings.ToolTipText = "Save current settings";
-            this.toolStripMenuItemSaveSettings.Click += new System.EventHandler(this.toolStripMenuItemSaveSettings_Click);
+            this.toolStripMenuItemSaveSettings.Click += new System.EventHandler(this.ToolStripMenuItemSaveSettings_Click);
             // 
             // toolStripSeparator4
             // 
@@ -120,7 +120,7 @@
             this.toolStripMenuItemMinimize.Size = new System.Drawing.Size(163, 22);
             this.toolStripMenuItemMinimize.Text = "Minimize";
             this.toolStripMenuItemMinimize.ToolTipText = "Minimize to tray";
-            this.toolStripMenuItemMinimize.Click += new System.EventHandler(this.toolStripMenuItemMinimize_Click);
+            this.toolStripMenuItemMinimize.Click += new System.EventHandler(this.ToolStripMenuItemMinimize_Click);
             // 
             // exitToolStripMenuItem
             // 
@@ -128,7 +128,7 @@
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
             // 
@@ -178,7 +178,7 @@
             this.toolStripTextBoxClientName.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.toolStripTextBoxClientName.Name = "toolStripTextBoxClientName";
             this.toolStripTextBoxClientName.Size = new System.Drawing.Size(100, 23);
-            this.toolStripTextBoxClientName.KeyUp += new System.Windows.Forms.KeyEventHandler(this.toolStripTextBoxClientName_KeyUp);
+            this.toolStripTextBoxClientName.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ToolStripTextBoxClientName_KeyUp);
             // 
             // toolStripSeparator1
             // 
@@ -192,7 +192,7 @@
             this.cutoffToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.cutoffToolStripMenuItem.Text = "Disconnect";
             this.cutoffToolStripMenuItem.ToolTipText = "Disconnect selected clients";
-            this.cutoffToolStripMenuItem.Click += new System.EventHandler(this.cutoffToolStripMenuItem_Click);
+            this.cutoffToolStripMenuItem.Click += new System.EventHandler(this.CutoffToolStripMenuItem_Click);
             // 
             // reconnectToolStripMenuItem
             // 
@@ -201,7 +201,7 @@
             this.reconnectToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.reconnectToolStripMenuItem.Text = "Stop";
             this.reconnectToolStripMenuItem.ToolTipText = "Stop arp spoofing";
-            this.reconnectToolStripMenuItem.Click += new System.EventHandler(this.reconnectToolStripMenuItem_Click);
+            this.reconnectToolStripMenuItem.Click += new System.EventHandler(this.ReconnectToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
@@ -215,7 +215,7 @@
             this.toolStripMenuItemRefreshClients.Size = new System.Drawing.Size(174, 22);
             this.toolStripMenuItemRefreshClients.Text = "Refresh";
             this.toolStripMenuItemRefreshClients.ToolTipText = "Refresh active client list";
-            this.toolStripMenuItemRefreshClients.Click += new System.EventHandler(this.toolStripMenuItemRefreshClients_Click);
+            this.toolStripMenuItemRefreshClients.Click += new System.EventHandler(this.ToolStripMenuItemRefreshClients_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -230,7 +230,7 @@
             this.aboutCSArpToolStripMenuItem.Name = "aboutCSArpToolStripMenuItem";
             this.aboutCSArpToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.aboutCSArpToolStripMenuItem.Text = "About CSArp";
-            this.aboutCSArpToolStripMenuItem.Click += new System.EventHandler(this.aboutCSArpToolStripMenuItem_Click);
+            this.aboutCSArpToolStripMenuItem.Click += new System.EventHandler(this.AboutCSArpToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -289,14 +289,14 @@
             this.clearStripMenuItem.Name = "clearStripMenuItem";
             this.clearStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.clearStripMenuItem.Text = "Clear";
-            this.clearStripMenuItem.Click += new System.EventHandler(this.clearStripMenuItem_Click);
+            this.clearStripMenuItem.Click += new System.EventHandler(this.ClearStripMenuItem_Click);
             // 
             // saveStripMenuItem
             // 
             this.saveStripMenuItem.Name = "saveStripMenuItem";
             this.saveStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.saveStripMenuItem.Text = "Save";
-            this.saveStripMenuItem.Click += new System.EventHandler(this.saveStripMenuItem_Click);
+            this.saveStripMenuItem.Click += new System.EventHandler(this.SaveStripMenuItem_Click);
             // 
             // showLogToolStripMenuItem
             // 
@@ -304,7 +304,7 @@
             this.showLogToolStripMenuItem.Name = "showLogToolStripMenuItem";
             this.showLogToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.showLogToolStripMenuItem.Text = "Show log";
-            this.showLogToolStripMenuItem.CheckStateChanged += new System.EventHandler(this.showLogToolStripMenuItem_CheckStateChanged);
+            this.showLogToolStripMenuItem.CheckStateChanged += new System.EventHandler(this.ShowLogToolStripMenuItem_CheckStateChanged);
             // 
             // listView1
             // 
@@ -379,8 +379,7 @@
             this.networkCardList.Name = "networkCardList";
             this.networkCardList.Size = new System.Drawing.Size(155, 21);
             this.networkCardList.TabIndex = 4;
-            this.networkCardList.Text = "-- Select --";
-            this.networkCardList.SelectedIndexChanged += new System.EventHandler(this.networkCardList_SelectedIndexChanged);
+            this.networkCardList.SelectedIndexChanged += new System.EventHandler(this.NetworkCardList_SelectedIndexChanged);
             // 
             // NetworkCardLabel
             // 
@@ -399,7 +398,7 @@
             this.refreshButton.TabIndex = 6;
             this.refreshButton.Text = "Refresh";
             this.refreshButton.UseVisualStyleBackColor = true;
-            this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
+            this.refreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
             // 
             // disconnectButton
             // 
@@ -409,7 +408,7 @@
             this.disconnectButton.TabIndex = 7;
             this.disconnectButton.Text = "Disconnect";
             this.disconnectButton.UseVisualStyleBackColor = true;
-            this.disconnectButton.Click += new System.EventHandler(this.disconnectButton_Click);
+            this.disconnectButton.Click += new System.EventHandler(this.DisconnectButton_Click);
             // 
             // myIpAddresslbl
             // 

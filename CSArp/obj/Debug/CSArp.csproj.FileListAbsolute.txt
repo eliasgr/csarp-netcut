@@ -46,3 +46,4 @@ D:\projects\csarp-netcut\CSArp\bin\Debug\System.Memory.dll
 D:\projects\csarp-netcut\CSArp\bin\Debug\System.Numerics.Vectors.dll
 D:\projects\csarp-netcut\CSArp\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
 D:\projects\csarp-netcut\CSArp\obj\Debug\CSArp.csproj.Fody.CopyLocal.cache
+D:\Projects\csarp-netcut\CSArp\obj\Debug\CSArp.csproj.CoreCompileInputs.cache

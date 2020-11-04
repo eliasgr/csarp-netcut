@@ -66,7 +66,7 @@ namespace CSArp
                 if (File.Exists("CSArp_settings.ini"))
                 {
                     string filecontents = File.ReadAllText("CSArp_settings.ini");
-                    retval = filecontents.Split(new string[] { majorDelim }, StringSplitOptions.RemoveEmptyEntries)[0].Split('\n')[0];
+                    retval = filecontents.Split(new string[] { majorDelim }, StringSplitOptions.RemoveEmptyEntries)[0].Split('\r')[0].Split('\n')[0]; ; ;
                 }
             }
             catch (Exception ex)

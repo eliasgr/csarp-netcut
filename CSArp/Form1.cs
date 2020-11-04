@@ -14,7 +14,7 @@ namespace CSArp
 {
     public partial class Form1 : Form, IView
     {
-        private Controller _controller;
+        private readonly Controller _controller;
         //private static ICaptureDevice capturedevice;
         public Form1()
         {
@@ -47,7 +47,14 @@ namespace CSArp
             }
         }
 
-        public ComboBox NetworkCardList => networkCardList;
+        public ComboBox NetworkCardList
+        {
+            get
+            {
+                return networkCardList;
+            }
+        }
+
         public Form MainForm
         {
             get
@@ -118,17 +125,17 @@ namespace CSArp
 
         #endregion
 
-        private void toolStripMenuItemRefreshClients_Click(object sender, EventArgs e)
+        private void ToolStripMenuItemRefreshClients_Click(object sender, EventArgs e)
         {
             _controller.RefreshClients();
         }
 
-        private void aboutCSArpToolStripMenuItem_Click(object sender, EventArgs e)
+        private void AboutCSArpToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _controller.ShowAboutBox();
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _controller.EndApplication();
         }
@@ -142,12 +149,12 @@ namespace CSArp
             _controller.InitializeNotifyIcon();
         }
 
-        private void cutoffToolStripMenuItem_Click(object sender, EventArgs e)
+        private void CutoffToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _controller.DisconnectSelectedClients();
         }
 
-        private void reconnectToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ReconnectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _controller.ReconnectClients();
         }
@@ -157,48 +164,48 @@ namespace CSArp
             _controller.FormResized(sender, e);
         }
 
-        private void toolStripTextBoxClientName_KeyUp(object sender, KeyEventArgs e)
+        private void ToolStripTextBoxClientName_KeyUp(object sender, KeyEventArgs e)
         {
             _controller.ToolStripTextBoxClientNameKeyUp(sender, e);
         }
 
-        private void toolStripMenuItemMinimize_Click(object sender, EventArgs e)
+        private void ToolStripMenuItemMinimize_Click(object sender, EventArgs e)
         {
             _controller.ToolStripMinimizeClicked();
         }
 
-        private void toolStripMenuItemSaveSettings_Click(object sender, EventArgs e)
+        private void ToolStripMenuItemSaveSettings_Click(object sender, EventArgs e)
         {
             _controller.ToolStripSaveClicked();
         }
 
-        private void showLogToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
+        private void ShowLogToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
         {
             _controller.ShowLogToolStripMenuItemChecked();
         }
 
-        private void saveStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveStripMenuItem_Click(object sender, EventArgs e)
         {
             _controller.SaveLogShowDialogBox();
         }
 
-        private void clearStripMenuItem_Click(object sender, EventArgs e)
+        private void ClearStripMenuItem_Click(object sender, EventArgs e)
         {
             _controller.ClearLog();
         }
 
-        private void networkCardList_SelectedIndexChanged(object sender, EventArgs e)
+        private void NetworkCardList_SelectedIndexChanged(object sender, EventArgs e)
         {
             _controller.RefreshClients();
             //label1.Text = myipaddress.ToString();
         }
 
-        private void refreshButton_Click(object sender, EventArgs e)
+        private void RefreshButton_Click(object sender, EventArgs e)
         {
             _controller.RefreshClients();
         }
 
-        private void disconnectButton_Click(object sender, EventArgs e)
+        private void DisconnectButton_Click(object sender, EventArgs e)
         {
             _controller.DisconnectSelectedClients();
         }

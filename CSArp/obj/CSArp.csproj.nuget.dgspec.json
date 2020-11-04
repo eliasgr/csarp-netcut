@@ -1,26 +1,22 @@
 {
   "format": 1,
   "restore": {
-    "D:\\projects\\csarp-netcut\\CSArp\\CSArp.csproj": {}
+    "D:\\Projects\\csarp-netcut\\CSArp\\CSArp.csproj": {}
   },
   "projects": {
-    "D:\\projects\\csarp-netcut\\CSArp\\CSArp.csproj": {
+    "D:\\Projects\\csarp-netcut\\CSArp\\CSArp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\projects\\csarp-netcut\\CSArp\\CSArp.csproj",
+        "projectUniqueName": "D:\\Projects\\csarp-netcut\\CSArp\\CSArp.csproj",
         "projectName": "CSArp",
-        "projectPath": "D:\\projects\\csarp-netcut\\CSArp\\CSArp.csproj",
-        "packagesPath": "C:\\Users\\elias\\.nuget\\packages\\",
-        "outputPath": "D:\\projects\\csarp-netcut\\CSArp\\obj\\",
+        "projectPath": "D:\\Projects\\csarp-netcut\\CSArp\\CSArp.csproj",
+        "packagesPath": "C:\\Users\\Elias\\.nuget\\packages\\",
+        "outputPath": "D:\\Projects\\csarp-netcut\\CSArp\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
-        "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\"
-        ],
         "configFilePaths": [
-          "C:\\Users\\elias\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\Elias\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net48"
