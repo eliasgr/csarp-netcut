@@ -22,7 +22,7 @@ namespace CSArp
             Note that the same MAC cannot have two clientnames but the same clientname can have two MACs
              */
 
-        private static string majorDelim = "--------------------------------------------------------------" + "\n";
+        private static string majorDelim = "--------------------------------------------------------------" + Environment.NewLine;
         private static string minorDelim = "$";
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace CSArp
         /// <returns></returns>
         public static string GetSavedClientNameFromMAC(string clientMACaddress)
         {
-            string retval = "";
+            string clientName = "";
             try
             {
                 if (File.Exists("CSArp_settings.ini"))
@@ -41,7 +41,7 @@ namespace CSArp
                     Dictionary<string, string> mactoclientnamedictionary = GetMACtoClientNameDictionary(filecontents);
                     if (mactoclientnamedictionary.ContainsKey(clientMACaddress))
                     {
-                        retval = (from entry in mactoclientnamedictionary where entry.Key == clientMACaddress select entry.Value).ToList()[0];
+                        clientName = (from entry in mactoclientnamedictionary where entry.Key == clientMACaddress select entry.Value).ToList()[0];
                     }
                 }
 
@@ -50,7 +50,7 @@ namespace CSArp
             {
                 Debug.Print("Exception in ApplicationSettingsClass.GetSavedClientNameFromMAC\n" + ex.Message);
             }
-            return retval;
+            return clientName;
 
         }
 
@@ -66,7 +66,8 @@ namespace CSArp
                 if (File.Exists("CSArp_settings.ini"))
                 {
                     string filecontents = File.ReadAllText("CSArp_settings.ini");
-                    retval = filecontents.Split(new string[] { majorDelim }, StringSplitOptions.RemoveEmptyEntries)[0].Split('\r')[0].Split('\n')[0]; ; ;
+                    retval = filecontents.Split(new string[] { majorDelim }, StringSplitOptions.RemoveEmptyEntries)[0].Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)[0];
+                    
                 }
             }
             catch (Exception ex)
@@ -149,12 +150,12 @@ namespace CSArp
         }
 
         #region Private methods
-        private static void WriteToFile(string interfacefriendlyname, Dictionary<string, string> macaddressclientnamedictionary, string filename)
+        private static void WriteToFile(string interfacefriendlyname, Dictionary<string, string> macAddressClientNameDictionary, string filename)
         {
-            string towrite = interfacefriendlyname + "\n" + majorDelim;
-            foreach (var entry in macaddressclientnamedictionary)
+            string towrite = interfacefriendlyname + Environment.NewLine + majorDelim;
+            foreach (var entry in macAddressClientNameDictionary)
             {
-                towrite += entry.Key + minorDelim + entry.Value + "\n";
+                towrite += entry.Key + minorDelim + entry.Value + Environment.NewLine;
             }
             File.WriteAllText(filename, towrite);
         }
@@ -169,10 +170,11 @@ namespace CSArp
             Dictionary<string, string> retval = new Dictionary<string, string>();
             try
             {
+                var str = Environment.NewLine;
                 string secondfield = settingsfilecontents.Split(new string[] { majorDelim }, StringSplitOptions.RemoveEmptyEntries)[1];
                 if (secondfield != "")
                 {
-                    string[] macandclientnamearray = secondfield.Split('\n');
+                    string[] macandclientnamearray = secondfield.Split(new string[] { Environment.NewLine},StringSplitOptions.RemoveEmptyEntries);
                     foreach (string entry in macandclientnamearray)
                     {
                         if (entry.Length > 10) //exclude any '\n'

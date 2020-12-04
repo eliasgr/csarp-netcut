@@ -26,6 +26,7 @@ namespace CSArp
     {
         #region fields
         private readonly IView _view;
+        //private static NpcapDevice device;
         #endregion
 
         #region constructor
@@ -35,11 +36,14 @@ namespace CSArp
         }
         #endregion
 
+       
+        
         /// <summary>
         /// Populate the available network cards
         /// </summary>
         public void PopulateInterfaces()
         {
+            
             //var capturedevicelist = NpcapDeviceList.Instance;
 
             List<string> capturedevicelistofstring = (from capturedevice in NpcapDeviceList.Instance
@@ -82,6 +86,7 @@ namespace CSArp
                 int parseindex = 0;
                 foreach (ListViewItem listitem in _view.ListView1.SelectedItems)
                 {
+                    
                     targetlist.Add(IPAddress.Parse(listitem.SubItems[1].Text), PhysicalAddress.Parse(listitem.SubItems[2].Text.Replace(":", "-")));
                     _view.MainForm.BeginInvoke(new Action(() =>
                     {
