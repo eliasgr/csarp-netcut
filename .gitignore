@@ -70,3 +70,6 @@ bld/*
 # NuGet v3's project.json files produces more ignoreable files
 *.nuget.props
 *.nuget.targets
+*.cache
+*.exe
+*.pdb
